@@ -1,5 +1,6 @@
 package com.github.ka4ok85.bioinformatics;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,20 +11,77 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/*
+ * Taking in consideration data set all actual combination generation task will take too much time
+ * Simple total number can be calculated using formula
+ */
 public class PerfectMatchings {
 
-	private HashMap<Integer, List<Integer>> edges = new HashMap<Integer, List<Integer>>();
+	//private HashMap<Integer, List<Integer>> edges = new HashMap<Integer, List<Integer>>();
+	//private HashMap<Integer, List<Integer>> clonedEdges = new HashMap<Integer, List<Integer>>();
 	
-	private HashMap<Integer, List<Integer>> clonedEdges = new HashMap<Integer, List<Integer>>();
-	
-	private List<Integer> nodes;
-	private int count = 0;
-	private int step = 1;
-	
+	//private List<Integer> nodes;
+	//private int count = 0;
+	//private int step = 1;
 	
 	
+	public BigInteger calculateCounts(String string) {
+		char[] charArray = string.toCharArray();
+		int aCount = 0;
+		int uCount = 0;
+		int cCount = 0;
+		int gCount = 0;
+		
+		int auCount = 0;
+		int cgCount = 0;
+		for (char c : charArray) {
+			if (c == "A".charAt(0)) {
+				aCount++;
+			}
+
+			if (c == "U".charAt(0)) {
+				uCount++;
+			}
+			
+			if (c == "C".charAt(0)) {
+				cCount++;
+			}
+			
+			if (c == "G".charAt(0)) {
+				gCount++;
+			}
+		}
+		
+		if (aCount != uCount) {
+			new RuntimeException("A and U pairs mismatch");
+		}
+		
+		if (cCount != gCount) {
+			new RuntimeException("C and G pairs mismatch");
+		}
+		
+		auCount = aCount;
+		cgCount = cCount;
+
+		BigInteger auCombinationsCount = factorial(BigInteger.valueOf(auCount));
+		BigInteger cgCombinationsCount = factorial(BigInteger.valueOf(cgCount));
+		
+		BigInteger result = auCombinationsCount.multiply(cgCombinationsCount);
+		
+		return result;
+	}
+
+	public static BigInteger factorial(BigInteger n) {
+		BigInteger ret = BigInteger.valueOf(1L);
+
+		for (int i = 1; n.compareTo(BigInteger.valueOf(i)) >= 0; ++i) {
+			ret = ret.multiply(BigInteger.valueOf(i));
+		}
+
+		return ret;
+	}	
 	
-	
+/*
 	public PerfectMatchings(String string) {
 		char[] charArray = string.toCharArray();
 		nodes = new ArrayList<Integer>();
@@ -74,6 +132,10 @@ public class PerfectMatchings {
 		//System.out.println(nodes);
 	}
 
+	public PerfectMatchings() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public HashMap<Integer, List<Integer>> getClonedEdges() {
 		return clonedEdges;
 	}
@@ -100,19 +162,7 @@ public class PerfectMatchings {
 	public void buildEdges() {
 		
 		
-/*
-		
-		edges.put(1, new ArrayList<Integer>(Arrays.asList(4, 7, 10)));
-		edges.put(2, new ArrayList<Integer>(Arrays.asList(3, 8)));
-		edges.put(3, new ArrayList<Integer>(Arrays.asList(2, 6)));
-		edges.put(4, new ArrayList<Integer>(Arrays.asList(1, 5, 9)));
-		edges.put(5, new ArrayList<Integer>(Arrays.asList(4, 7, 10)));
-		edges.put(6, new ArrayList<Integer>(Arrays.asList(3, 8)));
-		edges.put(7, new ArrayList<Integer>(Arrays.asList(1, 5, 9)));
-		edges.put(8, new ArrayList<Integer>(Arrays.asList(2, 6)));
-		edges.put(9, new ArrayList<Integer>(Arrays.asList(4, 7, 10)));
-		edges.put(10, new ArrayList<Integer>(Arrays.asList(1, 5, 9)));
-*/
+
 		//HashMap<Integer, List<Integer>> clone = new HashMap<Integer, List<Integer>>();
 		for (Entry<Integer, List<Integer>> entry : edges.entrySet()) {
 			
@@ -125,20 +175,6 @@ public class PerfectMatchings {
 
 
 		}
-
-/*
-		nodes = new ArrayList<Integer>();
-		nodes.add(1);
-		nodes.add(2);
-		nodes.add(3);
-		nodes.add(4);
-		nodes.add(5);
-		nodes.add(6);
-		nodes.add(7);
-		nodes.add(8);
-		nodes.add(9);
-		nodes.add(10);
-*/
 	}
 	
 	public void generate(List<Integer> currentNodes, HashMap<Integer, List<Integer>> currentEdges, int node, int connectTo, String result) {
@@ -150,19 +186,6 @@ public class PerfectMatchings {
 		if (result.equals("")) {
 			//currentEdges = new HashMap<Integer, List<Integer>>(edges);
 			//System.out.println("+++++++++++");
-			/*
-			currentEdges = new HashMap<Integer, List<Integer>>();
-			edges.put(1, new ArrayList<Integer>(Arrays.asList(4, 7, 10)));
-			edges.put(2, new ArrayList<Integer>(Arrays.asList(3, 8)));
-			edges.put(3, new ArrayList<Integer>(Arrays.asList(2, 6)));
-			edges.put(4, new ArrayList<Integer>(Arrays.asList(1, 5, 9)));
-			edges.put(5, new ArrayList<Integer>(Arrays.asList(4, 7, 10)));
-			edges.put(6, new ArrayList<Integer>(Arrays.asList(3, 8)));
-			edges.put(7, new ArrayList<Integer>(Arrays.asList(1, 5, 9)));
-			edges.put(8, new ArrayList<Integer>(Arrays.asList(2, 6)));
-			edges.put(9, new ArrayList<Integer>(Arrays.asList(4, 7, 10)));
-			edges.put(10, new ArrayList<Integer>(Arrays.asList(1, 5, 9)));
-			*/
 			
 			//currentEdges = getClonedEdges();
 			
@@ -291,25 +314,6 @@ public class PerfectMatchings {
 			//System.out.println("???");
 		}
 		//currentEdges.n
-		/*
-		if (result.equals("") == false) {
-			result = result + " " + element;
-		} else {
-			result = result + element;
-		}
-
-		if (otherElements.length > 0) {
-			for (int i = 0; i < otherElements.length; i++) {
-				generate(
-						otherElements[i], 
-						PermutationRecursive.removeElement(otherElements, otherElements[i]),
-						result
-				);				
-			}
-		} else {
-			System.out.println(result);
-		}
-		*/
 	}
 
 	public HashMap<Integer, List<Integer>> getEdges() {
@@ -323,6 +327,7 @@ public class PerfectMatchings {
 	public int getCount() {
 		return count;
 	}
-	
+*/
 
+	
 }
